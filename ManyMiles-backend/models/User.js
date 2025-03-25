@@ -38,7 +38,7 @@ const UserSchema=new mongoose.Schema({
         type:String,
         requried:true,
         minLength:6,
-        select:false
+        // select:false
     },
     contactNo:{
         type:String,
