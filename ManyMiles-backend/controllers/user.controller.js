@@ -76,12 +76,26 @@ exports.login = async (req, res) => {
     }
 };
 
-
+// @route GET /user/login
+// @desc Login User
+// @access Public
+exports.getUser=async (req,res) => {
+    try{
+        const user=await User.findById(req.params.id).select('-password');
+        if(!user){
+            return res.status(404).json({msg:"User Not Found"});
+        }
+        return res.status(200).json({msg:"User Found",user});
+    }catch(error){
+        console.log("User Fetch Failed",error);
+        return res.status(500).json({msg:"User Fetch Failed"});
+    }
+}
 
 // @route PATCH /user/update/:id
 // @desc Update User
 // @access Public
-exports.update=async (req,res) => {
+exports.updateUser=async (req,res) => {
     try{          
         
         // Only allow specific fields to be updated
@@ -105,6 +119,9 @@ exports.update=async (req,res) => {
         }
          // Find the user by ID and update only the allowed fields
         const user=await User.findByIdAndUpdate(req.params.id, {$set: updateField} , {new:true, runValidators:true}).select('-password');
+        if(!user){
+            return res.status(404).json({msg:"User Not Found"});
+        }
         return res.status(200).json({msg:"User Updated Successfully",user});
     
     }catch(error){
@@ -118,10 +135,13 @@ exports.update=async (req,res) => {
 // @access Public
 exports.deleteUser=async (req,res) => {
     try{
+        console.log(req.params.id);
         const userId = req.params.id;
 
         // Find the user first to validate password
         const user = await User.findById(userId);
+
+        console.log(user);
         if (!user) {
             return res.status(404).json({ msg: "User does not exist" });
         }
