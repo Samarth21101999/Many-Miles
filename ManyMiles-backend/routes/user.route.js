@@ -5,7 +5,7 @@ const {auth}=require('../middleware/auth');
 // Register User
 router.post('/register',register);
 
-router.get('/login',login);
+router.post('/login',login);
 
 router.get('/profile/:id',auth,getUser);
 router.patch('/update/:id',auth,updateUser);

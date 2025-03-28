@@ -1,11 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import AuthPage from './components/auth';
+import Login from './components/Authentication/Login';
+import Signup from './components/Authentication/Signup';
 
 const App = () => {
   return (
     <div>
-        <AuthPage/>
+        {/* <Login/> */}
+        <Signup/>
     </div>
   )
 }
