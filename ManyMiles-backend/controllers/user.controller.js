@@ -31,10 +31,10 @@ exports.register = async (req, res) => {
         password:hashedPassword, 
         contactNo
     });
-    
+    const accessToken=jwt.sign(JSON.stringify(user),process.env.ACCESS_TOKEN_SECRET);
     await user.save();
     
-    return res.status(200).json({msg:"User Registered Successfully"});
+    return res.status(200).json({msg:"User Registered Successfully", user, accessToken});
 
     }catch(error){
         console.log("User Registration Failed",error);
@@ -66,7 +66,7 @@ exports.login = async (req, res) => {
         
         // If password is correct, return the token
         if(isMatch){
-            return res.status(200).json({msg:"User Logged In Successfully",accessToken});
+            return res.status(200).json({msg:"User Logged In Successfully",accessToken, user});
         }else{
             return res.status(400).json({msg:"Invalid Credentials"});
         }

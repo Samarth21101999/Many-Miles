@@ -1,38 +1,59 @@
 import { useState } from "react";
-// import { useDispatch } from "react-redux";
-// import { login } from "../store/authSlice";
-// import { useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { loginFailure, loginSuccess } from "../../store/authSlice";
+import {useNavigate } from 'react-router'
+import axios from 'axios';
+import {Link} from 'react-router'
+// import { useauthService } from "./authService";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");   
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+// const {login}=useauthService();
   const handleLogin = async(e) => {
-
+    // dispatch(loginStart());
     e.preventDefault();
     setError('');
 try{
-    const response = await fetch('http://localhost:5000/user/login', {
-        method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({email, password}),
-      });
+ 
+    // dispatch(loginStart());
+    const response = await axios.post('http://localhost:5000/user/login', {
+       
+        email,
+        password
+       ,
+      },
+      {withCredentials:true}
+    );
   
-      if(!response.ok){
+      if(response.status!=200){
           const errorData = await response.json();  
-          console.log(errorData);
+          setError(errorData.message || 'Login Failed');
+          // dispatch(loginFailure(errorData.message || 'Login Failed'))
+          return;
       }
 
-      const data = await response.json();
-        console.log(data);
+      const data = await response.data;
+      console.log(data.user.name)
+      localStorage.setItem('user',data.user.name);
+      localStorage.setItem('token',data.accessToken);
+      dispatch(loginSuccess({user:data}))
+      navigate('/')
+      //   dispatch(login({data}));
+    //   // <Navigate replace to="/dashboard"/>
+    //   navigate("/dashboard")
+    //  return data;
+    // dispatch(login({email,password}));
+  //  navigate("/dashboard");
+      
 }catch(error){
+
     console.log(error);
-    setError(error.message);
+    setError(error.message || 'An Error Occurred');
+    // dispatch(loginFailure(error.message));
 }
     // dispatch(login({ email }));
     // navigate("/dashboard");
@@ -46,7 +67,7 @@ try{
     </div>
     {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form className="space-y-6" action="#" method="POST">
+      <form className="space-y-6"  onSubmit={handleLogin}>
         <div>
           <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">Email address</label>
           <div className="mt-2">
@@ -84,14 +105,14 @@ try{
         <div>
           <button 
           type="submit" 
-          onClick={handleLogin}
+         
           className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign in</button>
         </div>
       </form>
   
       <p className="mt-10 text-center text-sm/6 text-gray-500">
         Don't have an account?
-        <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">Signup</a>
+        <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-500">Signup</Link>
       </p>
     </div>
     </div>

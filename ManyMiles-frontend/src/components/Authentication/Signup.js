@@ -1,37 +1,46 @@
 import { useState } from "react";
-// import { useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 // import { login } from "../store/authSlice";
-// import { useNavigate } from "react-router-dom";
-
+import { loginSuccess, logout } from "../../store/authSlice";
+import { useNavigate } from "react-router";
+import axios from 'axios'
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [contactNo, setContactNo] = useState("");
   const [error, setError] = useState("");   
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSignup = async(e) => {
 
     e.preventDefault();
     setError('');
 try{
-    const response = await fetch('http://localhost:5000/user/register', {
-        method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({name, email, password, contactNo}),
-      });
+  const response = await axios.post('http://localhost:5000/user/register', {
+    name,   
+    email,
+    password,
+    contactNo,
+  },
+  {withCredentials:true}
+);
   
-      if(!response.ok){
-          const errorData = await response.json();  
-          console.log(errorData);
-      }
-
-      const data = await response.json();
-        console.log(data);
+    if(response.status!=200){
+              const errorData = await response.json();  
+              setError(errorData.message || 'Login Failed');
+              // dispatch(loginFailure(errorData.message || 'Login Failed'))
+              return;
+          }
+    
+          const data = await response.data;
+        
+          console.log(data)
+          localStorage.setItem('user',data.user.name);
+          localStorage.setItem('token',data.accessToken);
+          dispatch(loginSuccess({user:data}))
+          navigate('/');
 }catch(error){
     console.log(error);
     setError(error.message);
