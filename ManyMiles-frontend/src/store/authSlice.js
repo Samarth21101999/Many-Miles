@@ -24,7 +24,7 @@ const  authSlice=createSlice({
             state.isAuthenticated=true;
             state.loading=false,
             state.error=null
-            localStorage.setItem('user',JSON.stringify(action.payload.user.user));
+            localStorage.setItem('user',JSON.stringify(action.payload.user.user._id));
             localStorage.setItem('token',action.payload.user.accessToken);
         },
         // loginFailure: (state, action) => {

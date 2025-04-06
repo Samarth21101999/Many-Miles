@@ -16,116 +16,58 @@ import {
   useLocation
 } from "react-router";
 
+import { CookiesProvider } from 'react-cookie';
+import AddCar from './components/Car/AddCar';
 
 
-// const PersistGate=({children})=>{
-//   const dispatch=useDispatch();
-//   const navigate=useNavigate();
-//   const location=useLocation();
-//   const {isAuthenticated, user}=useSelector(state=>state.auth);
 
+// const PersistGate = ({ children }) => {
+  
+//   const dispatch = useDispatch();
+//   const {isAuthenticated,user}=useSelector((state)=>state.auth);
 
-//   useEffect(()=>{
-//     const userData=localStorage.getItem('user');
-//     const token=localStorage.getItem('token');
-
-//     if(token && userData && !user){
-      
-//       try{
-//         const user=JSON.parse(userData);
-//         dispatch(loginSuccess({user}));
-
-//         if(location.pathname==='/' || location.pathname==="/login"){
-//           navigate('/dashboard');
+//   useEffect(() => {
+//     const userData = localStorage.getItem("user");
+//     const token = localStorage.getItem("token");
+    
+//     if (token && userData && !user) {
+//       try {
+//         const user = JSON.parse(userData);
+//         dispatch(loginSuccess({ user, token }));
+//         if(window.location.pathName==='/' || window.location.pathName==="/login"){
+//          window.location.replace("/");
 //         }
-//       }catch(error){
-//         localStorage.removeItem('user');
-//         localStorage.removeItem('token');
+
+//       } catch (error) {
+//         localStorage.removeItem("user");
+//         localStorage.removeItem("token");
 //       }
 //     }
+//   }, [dispatch,user]);
 
-//   },[dispatch,navigate, location.pathname, user]);
 //   return children;
-// }
-
-// const AppLayout=()=>{
-//   return <Outlet/>
-// }
-
-
-
-const PersistGate = ({ children }) => {
-  
-  const dispatch = useDispatch();
-  // const navigate=useNavigate();
-  // const location=useLocation();
-  const {isAuthenticated,user}=useSelector((state)=>state.auth);
-
-  useEffect(() => {
-    const userData = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
-
-    if (token && userData && !user) {
-      try {
-        const user = JSON.parse(userData);
-        dispatch(loginSuccess({ user, token }));
-        if(window.location.pathName==='/' || window.location.pathName==="/login"){
-         window.location.replace("/");
-        }
-
-      } catch (error) {
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-      }
-    }
-  }, [dispatch,user]);
-
-  return children;
-};
-
-const PrivateRoute=({children})=>{
-  
-  const navigate=useNavigate();
-  const {isAuthenticated}=useSelector((state)=>state.auth);
-   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login");
-    }
-  }, [isAuthenticated, navigate]);
-  return isAuthenticated ?children : navigate("/login");
-
-}  
-//   return isAuthenticated ? children : null;
-// //  const navigate=useNavigate();
-// //   const user=useSelector((state)=>state.auth.user);
-// //   console.log(user);
-// //   return user ? children : navigate("/login");
 // };
 
+// const PrivateRoute=({children})=>{
+  
+//   const navigate=useNavigate();
+//   const {isAuthenticated}=useSelector((state)=>state.auth);
+//    useEffect(() => {
+//     if (!isAuthenticated) {
+//       navigate("/login");
+//     }
+//   }, [isAuthenticated, navigate]);
+//   return isAuthenticated ?children : navigate("/login");
 
-// const Root = () => {
-//   return (
-    
-//   )
-// }
+// }  
+
 
 const App=()=>{
   return(
-    // <Provider store={appStore}>  
-    
-    //     {/* <Login/> */}
-        
-    //   <BrowserRouter basename='/'>
-    //     <Routes>
-    //       <Route path='/' element={<Dashboard/>}>
-    //         <Route path='/login' element={<Login/>}/>
-    //         <Route path='/register' element={<Signup/>}/>
-    //       </Route>
-    //     </Routes>
-    //   </BrowserRouter>
-    // </Provider>
+
     <Provider store={appStore}>
-    <PersistGate>
+    {/* <PersistGate> */}
+    
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
@@ -138,51 +80,24 @@ const App=()=>{
           <Route
             path="/"
             element={
-              <PrivateRoute>
+              // <PrivateRoute>
                 <Dashboard />
-              </PrivateRoute>
+              // </PrivateRoute>
             }
           >
            <Route path="/profile" element={<Profile/>}/>
+           <Route path="/addCar" element={<AddCar/>}/>
            
           </Route>
          
         </Routes>
       </BrowserRouter>
-    </PersistGate>
+    {/* </PersistGate> */}
   </Provider>
-    // <PersistGate >
-      
-    // </PersistGate>
+ 
   )
 }
 
-// const root = ReactDOM.createRoot(document.getElementById('root'));
-// ReactDOM.createRoot(document.getElementById('root')).render(<RouterProvider router={router}/>)
 
-// root.render(<App />);const appRouter=createBrowserRouter([
-  // let router=createBrowserRouter([
-  //   {
-  //   path:"/",
-  //   element:<AppLayout/>,
-  //   children:[
-  //       {
-  //           index:true,
-  //           element:<Login/>
-  //       },
-  //       {
-  //         path:"/register",
-  //         element:<Signup/>
-  //       },
-  //       {
-  //         path:"/dashboard",
-  //         element:<Dashboard/>
-  //       }
-  //     ]
-  //     },
-  // ])
-// router.routes[0].element=<App/>
-// const root=ReactDOM.createRoot(document.getElementById("root"));
-// root.render(<Root/>)
 
 export default App;

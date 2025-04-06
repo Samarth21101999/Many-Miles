@@ -1,25 +1,42 @@
 import React, { useEffect, useState } from 'react'
 import {Link} from 'react-router'
-const Navbar = () => {
+import { useNavigate } from 'react-router'
+import { useCookies } from 'react-cookie';
+const Navbar = ({name}) => {
 
-    const[name,setName]=useState(null);
+    // const[name,setName]=useState(null);
 
-    useEffect(()=>{
-        const user=JSON.parse(localStorage.getItem('user'));
-        setName(user.name);
-        console.log(user);
+    // useEffect(()=>{
+    //     const user=JSON.parse(localStorage.getItem('user'));
+    //     setName(user.name);
+    //     console.log(user);
 
-    },[])
+    // },[])
+    const navigate=useNavigate();
+    const [cookies, , removeCookie] = useCookies(['accessToken']);
+    const handleSignOut = () => {
+      removeCookie('accessToken');
+      navigate("/login") // Redirect to login page after sign-out
+    };
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  // Close dropdown when an option is selected
+  const closeDropdown = () => {
+    setIsDropdownOpen(false);
+  };
     return (
     <div>
         
 
 <nav className="bg-white border-gray-200 dark:bg-gray-900">
   <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-    <Link to="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
+    <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
         <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
-        <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
+        <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Many Miles</span>
     </Link>
     <button data-collapse-toggle="navbar-default" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
         <span className="sr-only">Open main menu</span>
@@ -42,16 +59,58 @@ const Navbar = () => {
           <Link to="#" className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Pricing</Link>
         </li> */}
         <li>
-          <Link to="contact" className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Contact</Link>
+          <Link to="/contact" className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Contact</Link>
         </li>
         <li>
+          <Link to="/addCar" className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Add Car</Link>
+        </li>
+        {/* <li>
         {name ? (
             <Link to="/profile" className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"> Welcome {name}</Link>
         ):(
             <Link to="/login" className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"> Login </Link>
         )}
           
-        </li>
+        </li> */}
+        <li className="relative">
+                {name ? (
+                  <div className="relative">
+                    <button
+                      onClick={toggleDropdown} // Toggle dropdown visibility on click
+                      className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                    >
+                      Welcome, {name}
+                    </button>
+                    {isDropdownOpen && ( // Only show dropdown if it's open
+                      <div className="absolute bg-white shadow-lg rounded-md w-40 mt-2">
+                        <Link
+                          to="/profile"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={closeDropdown} // Close dropdown after clicking profile
+                        >
+                          Profile
+                        </Link>
+                        <button
+                          onClick={() => {
+                             handleSignOut();
+                            closeDropdown(); // Close dropdown after sign-out
+                          }}
+                          className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                        >
+                          Sign Out
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  >
+                    Login
+                  </Link>
+                )}
+              </li>
       </ul>
     </div>
   </div>

@@ -1,28 +1,43 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
+import axios from 'axios';
+import { useCookies } from 'react-cookie';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const Profile = () => {
     const navigate=useNavigate();
-    const { user } = useSelector((state) => state.auth);
-    const [profileData, setProfileData] = useState([]);
-  
+
+    const [cookies] = useCookies(['accessToken']);
+    const [profileData, setProfileData] = useState(null);
     useEffect(() => {
-      if (user) {
-        console.log(JSON.parse(user))
-        setProfileData(JSON.parse(user));
-      } else {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          try {
-            const parsedUser = JSON.parse(storedUser);
-            setProfileData(parsedUser);
-            console.log(parsedUser)
-          } catch (error) {
-            console.error('Error parsing user from localStorage:', error);
+      const fetchProfile = async () => {
+        try {
+          if (!cookies.accessToken) {
+            navigate("/login");
+            return;
           }
+          const res = await axios.get('http://localhost:5000/user/profile',{
+            headers: {
+              'Authorization': `Bearer ${cookies.accessToken}`,
+            },
+            withCredentials: true
+          });
+          
+          setProfileData(res.data.user); // Adjust based on your API response
+        } catch (err) {
+          console.error('Error fetching profile:', err);
+          toast.error('Failed to fetch profile. Please try again.');
+          navigate('/login');
         }
+      };
+    
+      if (cookies.accessToken) {
+        fetchProfile();
+      } else {
+        navigate('/login');
       }
-    }, [user]);
+    }, [cookies, navigate]);
   
     if (!profileData) {
       return (
@@ -36,9 +51,26 @@ const Profile = () => {
         setProfileData({ ...profileData, [name]: value });
       };
     
-      const handleUpdate = () => {
+      const handleUpdate = async() => {
+        try{
+         const res=await axios.patch(`http://localhost:5000/user/update`, {...profileData}, 
+          {
+            headers: {
+              'Authorization': `Bearer ${cookies.accessToken}`,
+            },
+            withCredentials: true
+          }
+         )
+         toast.success('Profile updated successfully!');
+         setProfileData(res.data.user);
+         navigate('/');
+        }catch(error){
+          console.log(error);
+          toast.error('Failed to update profile. Please try again.');
+        }
+        // Here you would typically send the updated profile data to your backend
         // dispatch(updateProfile(profileData));
-        navigate('/');
+        
       };
     
       const handleCancel = () => {
@@ -49,7 +81,7 @@ const Profile = () => {
   return (
     <div className="container mx-auto p-4">
     <h1 className="text-2xl font-semibold mb-4">Profile</h1>
-
+    <ToastContainer/>
     <div className="bg-white shadow rounded-lg p-6">
       <div className="mb-4">
         <strong className="block mb-2">Name:</strong>

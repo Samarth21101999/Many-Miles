@@ -4,12 +4,14 @@ import { loginFailure, loginSuccess } from "../../store/authSlice";
 import {useNavigate } from 'react-router'
 import axios from 'axios';
 import {Link} from 'react-router'
+import { useCookies } from 'react-cookie';
 // import { useauthService } from "./authService";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");   
+  const[cookie,setCookie]=useCookies(['accessToken']);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 // const {login}=useauthService();
@@ -26,7 +28,10 @@ try{
         password
        ,
       },
-      {withCredentials:true}
+      {withCredentials:true},
+      {headers: {
+        'Content-Type': 'application/json',
+      }}  
     );
   
       if(response.status!=200){
@@ -38,6 +43,12 @@ try{
 
       const data = await response.data;
       console.log(data.user.name)
+      setCookie('accessToken', data.accessToken, {
+        path: '/',
+        secure: true,
+        sameSite: 'strict',
+        maxAge: 3*24*60*60 // expires in 1 hour
+      });
       localStorage.setItem('user',data.user.name);
       localStorage.setItem('token',data.accessToken);
       dispatch(loginSuccess({user:data}))

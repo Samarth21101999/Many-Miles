@@ -3,6 +3,7 @@ const User=require('../models/User');
 const bcrypt=require('bcryptjs');
 const jwt=require('jsonwebtoken');
 const env=require('dotenv');
+const { createSecretToken } = require('../utils/SecretToken');
 env.config();
 
 // @route POST /user/register
@@ -31,7 +32,11 @@ exports.register = async (req, res) => {
         password:hashedPassword, 
         contactNo
     });
-    const accessToken=jwt.sign(JSON.stringify(user),process.env.ACCESS_TOKEN_SECRET);
+    const accessToken=createSecretToken(user._id);
+    res.cookie("accessToken",accessToken,{
+        withCredentials:true,
+        httpOnly:false,
+    });
     await user.save();
     
     return res.status(200).json({msg:"User Registered Successfully", user, accessToken});
@@ -62,7 +67,15 @@ exports.login = async (req, res) => {
         const isMatch=await bcrypt.compare(password,user.password);
 
         // create token
-        const accessToken=jwt.sign(JSON.stringify(user),process.env.ACCESS_TOKEN_SECRET);
+        // const accessToken=jwt.sign(JSON.stringify(user),process.env.ACCESS_TOKEN_SECRET);
+        
+        const accessToken=createSecretToken(user._id);
+        
+        res.cookie("accessToken",accessToken,{
+            withCredentials:true,
+            httpOnly:false,
+            path:'/',
+        });
         
         // If password is correct, return the token
         if(isMatch){
@@ -76,12 +89,17 @@ exports.login = async (req, res) => {
     }
 };
 
+
+exports.verifyUser=async(req,res)=>{
+    return res.status(200).json({msg:"User Verified",user:req.userId});
+}
+
 // @route GET /user/login
 // @desc Login User
 // @access Public
 exports.getUser=async (req,res) => {
     try{
-        const user=await User.findById(req.params.id).select('-password');
+        const user=await User.findById(req.userId.id).select('-password');
         if(!user){
             return res.status(404).json({msg:"User Not Found"});
         }
@@ -97,7 +115,6 @@ exports.getUser=async (req,res) => {
 // @access Public
 exports.updateUser=async (req,res) => {
     try{          
-        
         // Only allow specific fields to be updated
         const updateField={};
         const allowedFields=["name","email","password","contactNo","driverLicense","isCarOwner"];
@@ -118,7 +135,7 @@ exports.updateUser=async (req,res) => {
             updateField.password=await bcrypt.hash(updateField.password, 10);
         }
          // Find the user by ID and update only the allowed fields
-        const user=await User.findByIdAndUpdate(req.params.id, {$set: updateField} , {new:true, runValidators:true}).select('-password');
+        const user=await User.findByIdAndUpdate(req.userId.id, {$set: updateField} , {new:true, runValidators:true}).select('-password');
         if(!user){
             return res.status(404).json({msg:"User Not Found"});
         }
