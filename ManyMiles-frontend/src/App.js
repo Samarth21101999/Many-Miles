@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import Login from './components/Authentication/Login';
 import Signup from './components/Authentication/Signup';
 import Dashboard from './components/Home/Dashboard';
 import Profile from './components/Authentication/Profile'
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { login, loginSuccess } from './store/authSlice';
 import appStore from './store/appStore';
 import {
   createBrowserRouter,
@@ -13,11 +12,15 @@ import {
   Route,
   Routes,
   useNavigate,
-  useLocation
+  useLocation,
+  Outlet,
+  RouterProvider
 } from "react-router";
-
+import axios from 'axios';
+import {useCookies} from 'react-cookie';
 import { CookiesProvider } from 'react-cookie';
 import AddCar from './components/Car/AddCar';
+import Navbar from './components/Navbar/Navbar';
 
 
 
@@ -62,42 +65,116 @@ import AddCar from './components/Car/AddCar';
 // }  
 
 
-const App=()=>{
-  return(
+const AppLayout=()=>{
+  // const location = useLocation();
+   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  // const dispatch = useDispatch();
+  // const navigate = useNavigate();
+  // const [cookies,setCookie , removeCookie] = useCookies(['accessToken']);
+  // const [name, setName] = useState("");
+  // const [loading, setLoading] = useState(true); // <- add loading state
 
-    <Provider store={appStore}>
-    {/* <PersistGate> */}
+  // useEffect(() => {
+  //   const verifyCookie = async () => {
+  //     if (!cookies.accessToken) {
+  //       navigate("/login");
+  //       return;
+  //     }
+      
+  //     try {
+  //       const response = await axios.post('http://localhost:5000/user/verify',{}, {
+  //         headers: {
+  //           'Authorization': `Bearer ${cookies.accessToken}`
+  //         },
+  //         withCredentials: true
+  //       });
+
+  //       const { user } = response.data;
+
+  //       if (!user) {
+  //         removeCookie("accessToken");
+  //         navigate("/login");
+  //       } else {
+  //         console.log(user.name)
+  //         dispatch(setUser({ name: user.name, email: user.email }));
+        
+  //         localStorage.setItem('user',JSON.stringify(user));
+  //       }
+  //     } catch (err) {
+  //       console.error("Cookie verification failed:", err);
+  //       removeCookie("accessToken");
+  //       navigate("/login");
+  //     } finally {
+  //       setLoading(false); // <- allow render after verification
+  //     }
+  //   };
+
+  //   verifyCookie();
+  // }, [cookies, navigate, removeCookie]);
+
+  // if (loading) {
+  //   return <div>Loading...</div>; // Loading state while waiting for cookie verification
+  // }
+  return(
     
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Signup />} />
-          {/* <Route path="/about" element={<About/>}/>
-          <Route path="/contact" element={<Contact/>}/> */}
-          
-          {/* Protected Routes */}
-          <Route
-            path="/"
-            element={
-              // <PrivateRoute>
-                <Dashboard />
-              // </PrivateRoute>
-            }
-          >
-           <Route path="/profile" element={<Profile/>}/>
-           <Route path="/addCar" element={<AddCar/>}/>
-           
-          </Route>
-         
-        </Routes>
-      </BrowserRouter>
-    {/* </PersistGate> */}
-  </Provider>
+   
+    <div className='app'>
+      {!isAuthPage && <Navbar/>}
+      <Outlet/>
+    </div>
+   
+      
  
   )
 }
+const appRouter = createBrowserRouter([
+  {
+    path: "/",
+    element: <AppLayout />,
+    
+    children: [
+      {
+        path: "/",
+        element: <Dashboard />,
+        // children: [
+        //   { path: "profile", element: <Profile /> },
+        //   { path: "addCar", element: <AddCar /> },
+        // ],
+      },
+      {
+        path:"/profile",
+        element: <Profile />,
+      },
+      {
+        path: "/addCar",
+        element: <AddCar />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/register",
+        element: <Signup />,
+      },
+      // You can uncomment and add About, Contact later
+      // {
+      //   path: "/about",
+      //   element: <About />,
+      // },
+      // {
+      //   path: "/contact",
+      //   element: <Contact />,
+      // },
+    ],
+  },
+]);
 
-
-
+const App=()=>{
+  return (
+    <Provider store={appStore}>
+    <RouterProvider router={appRouter} />
+    </Provider>
+  )
+}
 export default App;

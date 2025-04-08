@@ -1,57 +1,27 @@
-import {createSlice} from '@reduxjs/toolkit';
-// import { useauthService } from '../components/Authentication/authService';
-const user=localStorage.getItem('user');
-const token=localStorage.getItem("token");
-// const storedUser = localStorage.getItem('user');
+// src/redux/userSlice.js
+import { createSlice } from '@reduxjs/toolkit';
 
-const  authSlice=createSlice({
-    name:'auth',
-    initialState:{
-        user:user || null,
-        isAuthenticated: !!token,
-        error:null,
-        loading:false
+const authSlice = createSlice({
+  name: 'user',
+  initialState: {
+    name: null,
+    email: null,
+    isAuthenticated: false
+  },
+  reducers: {
+    setUser: (state, action) => {
+    console.log(action.payload)
+      state.name = action.payload.name;
+      state.email = action.payload.email;
+      state.isAuthenticated = true;
     },
-    reducers:{
-        // loginStart:(state)=>{
-        //     state.loading=true;
-        //     state.error=null;
-        // },
-        loginSuccess:(state,action)=>{
-            console.log(action)
-            state.user=action.payload.user;
-            state.token=action.payload.user.accessToken;
-            state.isAuthenticated=true;
-            state.loading=false,
-            state.error=null
-            localStorage.setItem('user',JSON.stringify(action.payload.user.user._id));
-            localStorage.setItem('token',action.payload.user.accessToken);
-        },
-        // loginFailure: (state, action) => {
-        //     state.loading = false;
-        //     state.error = action.payload;
-        //   },
-        logout:(state)=>{
-            state.user=null;
-            state.isAuthenticated=false;
-            state.token=null;
-            localStorage.removeItem('user');
-            localStorage.removeItem('token');
-            // useauthService.logout();
-            // localStorage.removeItem('user');
-        },
+    clearUser: (state) => {
+      state.name = null;
+      state.email = null;
+      state.isAuthenticated = false;
     }
-})
-// export const login = (credentials) => async (dispatch) => {
-//     try {
-//       dispatch(loginStart());
-//       const data = await authService.login(credentials.email, credentials.password);
-//       dispatch(loginSuccess(data.user || data));
-//       return data;
-//     } catch (error) {
-//       dispatch(loginFailure(error.message));
-//       throw error;
-//     }
-//   };
-export const {loginSuccess,logout}=authSlice.actions;
+  }
+});
+
+export const { setUser, clearUser } = authSlice.actions;
 export default authSlice.reducer;

@@ -67,11 +67,14 @@ import Navbar from '../Navbar/Navbar';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import Car from '../Car/Car';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../store/authSlice';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [cookies, , removeCookie] = useCookies(['accessToken']);
   const [name, setName] = useState("");
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true); // <- add loading state
 
   useEffect(() => {
@@ -96,6 +99,7 @@ const Dashboard = () => {
           navigate("/login");
         } else {
           setName(user.name);
+          dispatch(setUser({ name: user.name, email: user.email }));
           localStorage.setItem('user',JSON.stringify(user));
         }
       } catch (err) {
@@ -116,9 +120,9 @@ const Dashboard = () => {
 
   return (
     <div>
-      <Navbar name={name} />
+     
       <Car/>
-      <Outlet/>
+      
     </div>
   );
 };

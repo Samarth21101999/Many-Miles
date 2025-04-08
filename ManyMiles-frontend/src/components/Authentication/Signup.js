@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 // import { login } from "../store/authSlice";
-import { loginSuccess, logout } from "../../store/authSlice";
 import { useNavigate } from "react-router";
 import axios from 'axios'
 const Signup = () => {

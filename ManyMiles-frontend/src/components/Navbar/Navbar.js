@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import {Link} from 'react-router'
 import { useNavigate } from 'react-router'
 import { useCookies } from 'react-cookie';
-const Navbar = ({name}) => {
+import { useSelector, useDispatch } from 'react-redux';
+const Navbar = () => {
 
     // const[name,setName]=useState(null);
 
@@ -11,7 +12,13 @@ const Navbar = ({name}) => {
     //     setName(user.name);
     //     console.log(user);
 
+
+
     // },[])
+  
+   const dispatch = useDispatch();
+   const name = useSelector(state => state.auth.name); 
+   console.log(useSelector((state)=>state.auth));
     const navigate=useNavigate();
     const [cookies, , removeCookie] = useCookies(['accessToken']);
     const handleSignOut = () => {
@@ -28,6 +35,17 @@ const Navbar = ({name}) => {
   const closeDropdown = () => {
     setIsDropdownOpen(false);
   };
+  if (!name) {
+    return (
+      <nav className="bg-white border-gray-200 dark:bg-gray-900">
+        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+          {/* Render a loading spinner or something else */}
+          <div>Loading...</div>
+        </div>
+      </nav>
+    );
+  }
+
     return (
     <div>
         

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useDispatch } from 'react-redux';
-import { loginFailure, loginSuccess } from "../../store/authSlice";
 import {useNavigate } from 'react-router'
 import axios from 'axios';
 import {Link} from 'react-router'
@@ -51,7 +50,7 @@ try{
       });
       localStorage.setItem('user',data.user.name);
       localStorage.setItem('token',data.accessToken);
-      dispatch(loginSuccess({user:data}))
+      // dispatch(s({user:data}))
       navigate('/')
       //   dispatch(login({data}));
     //   // <Navigate replace to="/dashboard"/>
