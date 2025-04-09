@@ -11,6 +11,7 @@ env.config();
 // @access Public
 // Add Car
 exports.addCar = async (req, res) => {
+  console.log("Add Car Request", req.body);
     const userId = req.userId._id;
 
     // const { make, model, year, color, licensePlate, photos, description, features, pricePerDay, location, availability, insurance, reviews, averageRating} = req.body;
@@ -38,3 +39,17 @@ exports.getAllCars = async (req, res) => {
       res.status(500).json({ message: 'Failed to retrieve cars', error: error.message });
     }
   };
+
+  exports.getCarById = async (req, res) => {
+    const carId = req.params.id;
+    try {
+        const car = await Car.findById(carId);
+        if (!car) {
+            return res.status(404).json({msg:"Car Not Found"});
+        }
+        return res.status(200).json(car);
+    } catch (error) {
+        console.log("Car Retrieval Failed", error);
+        return res.status(500).json({msg:"Car Retrieval Failed"});
+    }
+  }

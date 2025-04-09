@@ -120,9 +120,7 @@ const Dashboard = () => {
 
   return (
     <div>
-     
       <Car/>
-      
     </div>
   );
 };

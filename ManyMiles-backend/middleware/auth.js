@@ -5,7 +5,7 @@ dotenv.config();
 
 exports.auth=async(req,res,next)=>{
     const token=req.cookies.accessToken;
-    console.log(token)
+    console.log("Token",token);
     if(!token){
         return res.json({status:false});
     }
@@ -13,6 +13,8 @@ exports.auth=async(req,res,next)=>{
 
     
     jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,async(err,decoded)=>{
+        
+        
         if(err){
             return res.json({status:false});
         }

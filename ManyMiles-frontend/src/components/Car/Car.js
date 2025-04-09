@@ -40,7 +40,7 @@ const Car = () => {
     },[])
 
   return (
-    <div className='flex flex-wrap gap-4'>
+    <div className='flex flex-wrap gap-4 mx-4 my-4'>
         {carData.map((car) => (
         <CarCard key={car._id} car={car} />
       ))}

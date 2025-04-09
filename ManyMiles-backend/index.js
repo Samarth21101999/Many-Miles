@@ -15,7 +15,7 @@ const app=express();
 const corsOptions = {
     origin: 'http://localhost:1234', // Frontend URL
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Include PATCH here
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", 'WithCredentials'],
     credentials: true, // If you need credentials (e.g., cookies)
 };
 

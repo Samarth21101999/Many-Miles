@@ -22,7 +22,7 @@ import { CookiesProvider } from 'react-cookie';
 import AddCar from './components/Car/AddCar';
 import Navbar from './components/Navbar/Navbar';
 
-
+import CarDetails from './components/Car/CarDetails';
 
 // const PersistGate = ({ children }) => {
   
@@ -148,6 +148,10 @@ const appRouter = createBrowserRouter([
       {
         path: "/addCar",
         element: <AddCar />,
+      },
+      {
+        path: "/car/:id",
+        element: <CarDetails />,
       },
       {
         path: "/login",
