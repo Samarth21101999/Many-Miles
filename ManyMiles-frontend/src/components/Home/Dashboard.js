@@ -99,8 +99,9 @@ const Dashboard = () => {
           navigate("/login");
         } else {
           setName(user.name);
-          dispatch(setUser({ name: user.name, email: user.email }));
           localStorage.setItem('user',JSON.stringify(user));
+          dispatch(setUser({ name: user.name, email: user.email }));
+          
         }
       } catch (err) {
         console.error("Cookie verification failed:", err);

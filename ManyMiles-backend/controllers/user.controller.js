@@ -1,5 +1,6 @@
 
 const User=require('../models/User');
+const Car=require('../models/Car');
 const bcrypt=require('bcryptjs');
 const jwt=require('jsonwebtoken');
 const env=require('dotenv');
@@ -100,10 +101,13 @@ exports.verifyUser=async(req,res)=>{
 exports.getUser=async (req,res) => {
     try{
         const user=await User.findById(req.userId.id).select('-password');
+        const car=await Car.find({owner:req.userId.id});
+        const profileData={car, user};
+        console.log(profileData);
         if(!user){
             return res.status(404).json({msg:"User Not Found"});
         }
-        return res.status(200).json({msg:"User Found",user});
+        return res.status(200).json({msg:"User Found",profileData});
     }catch(error){
         console.log("User Fetch Failed",error);
         return res.status(500).json({msg:"User Fetch Failed"});

@@ -40,7 +40,18 @@ const CarDetails = () => {
     , []);
   return (
     <div>
-       {carDetails.make}
+       {carDetails ? (
+        <div className="car-details-container">
+            <h1>{carDetails.make} {carDetails.model}</h1>
+            <p>Year: {carDetails.year}</p>
+            <p>License Plate: {carDetails.licensePlate}</p>
+            <p>Description: {carDetails.description}</p>
+            <p>Price per Day: ${carDetails.pricePerDay}</p>
+            <p>Address: {carDetails.location.address}, {carDetails.location.city}, {carDetails.location.state}, {carDetails.location.zipCode}</p>
+        </div>
+       ) : (
+        <div className="loading">Loading car details...</div>
+       )}
     </div>
   )
 }

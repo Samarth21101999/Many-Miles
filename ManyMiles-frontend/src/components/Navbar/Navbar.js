@@ -3,28 +3,21 @@ import {Link} from 'react-router'
 import { useNavigate } from 'react-router'
 import { useCookies } from 'react-cookie';
 import { useSelector, useDispatch } from 'react-redux';
-import clearUser from '../../store/authSlice';
+import {clearUser} from '../../store/authSlice';
 const Navbar = () => {
 
-    // const[name,setName]=useState(null);
-
-    // useEffect(()=>{
-    //     const user=JSON.parse(localStorage.getItem('user'));
-    //     setName(user.name);
-    //     console.log(user);
-
-
-
-    // },[])
+ 
   
    const dispatch = useDispatch();
-   const name = useSelector(state => state.auth.name); 
+   const name = useSelector(state => state.auth.name);
+   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
    console.log(useSelector((state)=>state.auth));
     const navigate=useNavigate();
     const [cookies, , removeCookie] = useCookies(['accessToken']);
     const handleSignOut = () => {
       removeCookie('accessToken');
       localStorage.removeItem('user'); // Clear user data from local storage
+      dispatch(clearUser()); // Clear user data from Redux store
       navigate("/login") // Redirect to login page after sign-out
     };
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -33,19 +26,22 @@ const Navbar = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  // Close dropdown when an option is selected
+ 
   const closeDropdown = () => {
     setIsDropdownOpen(false);
   };
+
+
   if (!name) {
-    return (
-      <nav className="bg-white border-gray-200 dark:bg-gray-900">
-        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-          {/* Render a loading spinner or something else */}
-          <div>Loading...</div>
-        </div>
-      </nav>
-    );
+    return null;
+    // return (
+    //   <nav className="bg-white border-gray-200">
+    //     <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+    //       {/* Render a loading spinner or something else */}
+    //       <div>Loading...</div>
+    //     </div>
+    //   </nav>
+    // );
   }
 
     return (
@@ -93,7 +89,7 @@ const Navbar = () => {
           
         </li> */}
         <li className="relative">
-                {name ? (
+                {isAuthenticated ? (
                   <div className="relative">
                     <button
                       onClick={toggleDropdown} // Toggle dropdown visibility on click

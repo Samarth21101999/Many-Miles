@@ -57,7 +57,7 @@ const CarSchema = new mongoose.Schema({
     required: [true, 'Please add license plate number'],
     unique: true
   },
-  photos: [String],
+  images: [String],
   description: {
     type: String,
     required: [true, 'Please add a description'],

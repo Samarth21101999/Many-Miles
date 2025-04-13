@@ -29,23 +29,26 @@ try{
     if(response.status!=200){
               const errorData = await response.json();  
               setError(errorData.message || 'Login Failed');
-              // dispatch(loginFailure(errorData.message || 'Login Failed'))
               return;
           }
     
           const data = await response.data;
         
-          console.log(data)
-          localStorage.setItem('user',data.user.name);
-          localStorage.setItem('token',data.accessToken);
-          dispatch(loginSuccess({user:data}))
-          navigate('/');
+         setCookie('accessToken', data.accessToken, {
+                path: '/',
+                secure: true,
+                sameSite: 'strict',
+                maxAge: 3*24*60*60 // expires in 1 hour
+              });
+              localStorage.setItem('user',data.user.name);
+              localStorage.setItem('token',data.accessToken);
+              
+              dispatch(setUser({ name: data.user.name, email: data.user.email }));
+              navigate("/");
 }catch(error){
     console.log(error);
     setError(error.message);
 }
-    // dispatch(login({ email }));
-    // navigate("/dashboard");
   };
 
   return (

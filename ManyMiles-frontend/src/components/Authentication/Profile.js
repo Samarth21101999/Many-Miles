@@ -5,11 +5,14 @@ import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Car from '../../../../ManyMiles-backend/models/Car';
+import CarCard from '../Car/CarCard';
 const Profile = () => {
     const navigate=useNavigate();
 
     const [cookies] = useCookies(['accessToken']);
     const [profileData, setProfileData] = useState(null);
+    const[carData,setCarData]=useState([])
     useEffect(() => {
       const fetchProfile = async () => {
         try {
@@ -19,12 +22,21 @@ const Profile = () => {
           }
           const res = await axios.get('http://localhost:5000/user/profile',{
             headers: {
-              'Authorization': `Bearer ${cookies.accessToken}`,
+              'Authorization': `Bearer ${cookies.accessToken}`, 
             },
             withCredentials: true
           });
           
-          setProfileData(res.data.user); // Adjust based on your API response
+
+          setProfileData(res.data.profileData.user); // Adjust based on your API response
+          setCarData(res.data.profileData.car); // Adjust based on your API response
+        //   const userAddedCar=await axios.get('http://localhost:5000/car/getCarByUserId',{ 
+        //     headers: {
+        //     'Authorization': `Bearer ${cookies.accessToken}`, 
+        //   },
+        //   withCredentials: true
+        // });
+
         } catch (err) {
           console.error('Error fetching profile:', err);
           toast.error('Failed to fetch profile. Please try again.');
@@ -68,8 +80,6 @@ const Profile = () => {
           console.log(error);
           toast.error('Failed to update profile. Please try again.');
         }
-        // Here you would typically send the updated profile data to your backend
-        // dispatch(updateProfile(profileData));
         
       };
     
@@ -166,6 +176,13 @@ const Profile = () => {
           Cancel
         </button>
       </div>
+      <div> 
+        <h1 className="text-2xl font-semibold mb-4 mt-8">My Cars</h1>
+      {carData.map((car) => (
+                  <CarCard key={car._id} car={car} />
+                ))}
+      </div>
+      
     </div>
   </div>
   )

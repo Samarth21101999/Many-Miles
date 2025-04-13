@@ -4,7 +4,8 @@ import {useNavigate } from 'react-router'
 import axios from 'axios';
 import {Link} from 'react-router'
 import { useCookies } from 'react-cookie';
-// import { useauthService } from "./authService";
+import {setUser} from '../../store/authSlice';
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,16 +14,14 @@ const Login = () => {
   const[cookie,setCookie]=useCookies(['accessToken']);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-// const {login}=useauthService();
+
   const handleLogin = async(e) => {
-    // dispatch(loginStart());
+
     e.preventDefault();
     setError('');
-try{
- 
-    // dispatch(loginStart());
-    const response = await axios.post('http://localhost:5000/user/login', {
-       
+
+    try{
+    const response = await axios.post('http://localhost:5000/user/login', {       
         email,
         password
        ,
@@ -36,12 +35,11 @@ try{
       if(response.status!=200){
           const errorData = await response.json();  
           setError(errorData.message || 'Login Failed');
-          // dispatch(loginFailure(errorData.message || 'Login Failed'))
           return;
       }
 
       const data = await response.data;
-      console.log(data.user.name)
+      
       setCookie('accessToken', data.accessToken, {
         path: '/',
         secure: true,
@@ -50,24 +48,16 @@ try{
       });
       localStorage.setItem('user',data.user.name);
       localStorage.setItem('token',data.accessToken);
-      // dispatch(s({user:data}))
-      navigate('/')
-      //   dispatch(login({data}));
-    //   // <Navigate replace to="/dashboard"/>
-    //   navigate("/dashboard")
-    //  return data;
-    // dispatch(login({email,password}));
-  //  navigate("/dashboard");
       
+      dispatch(setUser({ name: data.user.name, email: data.user.email }));
+      navigate("/");
+
 }catch(error){
 
     console.log(error);
     setError(error.message || 'An Error Occurred');
-    // dispatch(loginFailure(error.message));
-}
-    // dispatch(login({ email }));
-    // navigate("/dashboard");
-  };
+  } 
+};
 
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">

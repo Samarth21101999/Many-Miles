@@ -4,6 +4,8 @@ const bcrypt=require('bcryptjs');
 const jwt=require('jsonwebtoken');
 const env=require('dotenv');
 const { createSecretToken } = require('../utils/SecretToken');
+const  uploadToSupabase  = require('../config/uploadToSupabase');
+
 env.config();
 
 // @route POST /user/register
@@ -13,18 +15,31 @@ env.config();
 exports.addCar = async (req, res) => {
   console.log("Add Car Request", req.body);
     const userId = req.userId._id;
+    console.log("Files received", req.files);
+    let imageUrls = [];
+    if(req.files && req.files.length > 0) {
+      imageUrls=await uploadToSupabase(req.files);
+      console.log("Image URLs", imageUrls);
+      if(!imageUrls) {
+        return res.status(500).json({msg:"Image Upload Failed"});
+      }
+    }
+    const location = JSON.parse(req.body.location);
+
 
     // const { make, model, year, color, licensePlate, photos, description, features, pricePerDay, location, availability, insurance, reviews, averageRating} = req.body;
     try {
         const car = new Car({
             ...req.body,
+            location,
+            images: imageUrls,
             owner: userId,   
         });
         await car.save();
         return res.status(200).json({msg:"Car Added Successfully", car});
     } catch (error) {
         console.log("Car Addition Failed", error);
-        return res.status(500).json({msg:"Car Addition Failed"});
+        return res.status(500).json(error.errorResponse.keyValue);
     }
 }
 exports.getAllCars = async (req, res) => {
