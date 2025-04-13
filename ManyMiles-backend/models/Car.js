@@ -85,7 +85,9 @@ const CarSchema = new mongoose.Schema({
   },
   availability: [{
     startDate: Date,
-    endDate: Date
+    startTime:String,
+    endDate: Date,
+    endTime: String
   }],
   insurance: {
     policyNumber: String,

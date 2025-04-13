@@ -5,11 +5,12 @@ import { useCookies } from 'react-cookie'
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios'
+import { useNavigate } from 'react-router'
 const AddCar = () => {
     const [cookies] = useCookies(['accessToken']);
     const [error, setError] = useState('');
     const [files,setFiles]=useState([]);
-
+  const navigate=useNavigate();
     
 
     const [formData, setFormData] = useState({
@@ -24,6 +25,15 @@ const AddCar = () => {
         city: '',
         state: '',
         zipCode: '',
+        startDate: '',
+        startTime: '',
+        endDate: '',
+        endTime: '',
+        policyNumber: '',
+        provider: '',
+        coverageType: '',
+        expiryDate: '',
+
       });
     
       const [loading, setLoading] = useState(false);
@@ -41,9 +51,7 @@ const AddCar = () => {
         try {
 
             const data=new FormData();
-            files.forEach((file) => {
-                data.append('images', file);
-            });
+            console.log(data)
 
             const location = {
               type: 'Point',
@@ -53,18 +61,71 @@ const AddCar = () => {
               state: formData.state,
               zipCode: formData.zipCode
             };
-            
+            const availability = {
+              startDate: formData.startDate,
+              endDate: formData.endDate
+            }
+
+            const insurance={
+              policyNumber: formData.policyNumber,
+              provider: formData.provider,
+              coverageType: formData.coverageType,
+              expiryDate: formData.expiryDate,
+              verified: false,
+            }
+
             const fieldsToSend = {
               ...formData,
               features: formData.features.split(',').map(f => f.trim()), // convert to array
-              location
+              location,
+              availability,
+              insurance,
             };
 
-            Object.entries(fieldsToSend).forEach(([key, value]) => {
-              data.append(key, typeof value === 'object' ? JSON.stringify(value) : value);
-            });
+            data.append('make', formData.make);
+            data.append('model', formData.model);
+            data.append('year', formData.year);
+            data.append('licensePlate', formData.licensePlate);
+            data.append('description', formData.description);
+            data.append('pricePerDay', formData.pricePerDay);
+
+            // Features as array
+            data.append('features', JSON.stringify(formData.features.split(',').map(f => f.trim())));
+
+            // Append nested objects as JSON strings
+            data.append('location', JSON.stringify({
+              type: 'Point',
+              coordinates: [0, 0],
+              address: formData.address,
+              city: formData.city,
+              state: formData.state,
+              zipCode: formData.zipCode
+            }));
+
+            data.append('availability', JSON.stringify([{
+              startDate: formData.startDate,
+              startTime: formData.startTime,
+              endDate: formData.endDate,
+              endTime: formData.endTime
+            }]));
+
+            data.append('insurance', JSON.stringify({
+              policyNumber: formData.policyNumber,
+              provider: formData.provider,
+              coverageType: formData.coverageType,
+              expiryDate: formData.expiryDate,
+              verified: false
+            }));
+
+            // Owner ID
             const userId = JSON.parse(localStorage.getItem('user'));
             data.append('owner', userId._id);
+
+            // Files
+            files.forEach(file => {
+              data.append('images', file);
+            });
+
             const response = await axios.post('http://localhost:5000/car/addCar', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -87,8 +148,17 @@ const AddCar = () => {
                     address: '',
                     city: '',
                     state: '',
-                    zipCode: ''
+                    zipCode: '',
+                    startDate: '',
+                    startTime: '',
+                    endDate: '',
+                    endTime: '',
+                    policyNumber: '',
+                    provider: '',
+                    coverageType: '',
+                    expiryDate: '',
                 });
+                navigate('/');
             } else {
                 setError('Failed to add car. Please try again.');
                 toast.error('Failed to add car. Please try again.');
@@ -240,6 +310,92 @@ const AddCar = () => {
             />
           </div>
         </div>
+        {/* Availability Period */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block mb-1 font-medium">Available From</label>
+          <input
+            type="date"
+            name="startDate"
+            value={formData.startDate}
+            onChange={handleChange}
+            required
+            className="w-full border px-3 py-2 rounded"
+          />
+          
+          <input
+            type="time"
+            name="startTime"
+            value={formData.startTime}
+            onChange={handleChange}
+            required
+            className="w-full border px-3 py-2 rounded"
+          />
+        </div>
+          <div>
+            <label className="block mb-1 font-medium">Available Until</label>
+            <input
+              type="date"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
+              required
+              className="w-full border px-3 py-2 rounded"
+            />
+            <input
+              type="time"
+              name="endTime"
+              value={formData.endTime}
+              onChange={handleChange}
+              required
+              className="w-full border px-3 py-2 rounded"
+            />
+          </div>
+        </div>
+
+      {/* Insurance Information */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div>
+          <label className="block mb-1 font-medium">Insurance Policy Number</label>
+          <input
+            type="text"
+            name="policyNumber"
+            value={formData.policyNumber}
+            onChange={handleChange}
+            className="w-full border px-3 py-2 rounded"
+          />
+        </div>
+        <div>
+          <label className="block mb-1 font-medium">Insurance Provider</label>
+          <input
+            type="text"
+            name="provider"
+            value={formData.provider}
+            onChange={handleChange}
+            className="w-full border px-3 py-2 rounded"
+          />
+        </div>
+        <div>
+          <label className="block mb-1 font-medium">Coverage Type</label>
+          <input
+            type="text"
+            name="coverageType"
+            value={formData.coverageType}
+            onChange={handleChange}
+            className="w-full border px-3 py-2 rounded"
+          />
+        </div>
+        <div>
+          <label className="block mb-1 font-medium">Expiry Date</label>
+          <input
+            type="date"
+            name="expiryDate"
+            value={formData.expiryDate}
+            onChange={handleChange}
+            className="w-full border px-3 py-2 rounded"
+          />
+        </div>
+      </div>
 
         {/* Photo Upload */}
         <div>

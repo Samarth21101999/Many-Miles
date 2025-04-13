@@ -5,7 +5,7 @@ dotenv.config();
 
 exports.auth=async(req,res,next)=>{
     const token=req.cookies.accessToken;
-    console.log("Token",token);
+ 
     if(!token){
         return res.json({status:false});
     }
