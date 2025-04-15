@@ -46,7 +46,8 @@ const Car = () => {
 
     const filteredCars=carData.filter(car=>
       car.make.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      car.model.toLowerCase().includes(searchQuery.toLowerCase())
+      car.model.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      car.location.city.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
   return (
@@ -63,10 +64,12 @@ const Car = () => {
           onChange={handleSearchChange}
           className="w-full my-2 p-2  border border-gray-300 rounded-2xl"
         />
-
+      <p>Found {filteredCars.length} cars</p>
       </div>
       </div>
+      
       <div className='flex flex-wrap justify-center'>
+      
       {filteredCars.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
 

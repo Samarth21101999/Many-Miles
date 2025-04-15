@@ -40009,7 +40009,7 @@ const Car = ()=>{
     const handleSearchChange = (e)=>{
         setSearchQuery(e.target.value);
     };
-    const filteredCars = carData.filter((car)=>car.make.toLowerCase().includes(searchQuery.toLowerCase()) || car.model.toLowerCase().includes(searchQuery.toLowerCase()));
+    const filteredCars = carData.filter((car)=>car.make.toLowerCase().includes(searchQuery.toLowerCase()) || car.model.toLowerCase().includes(searchQuery.toLowerCase()) || car.location.city.toLowerCase().includes(searchQuery.toLowerCase()));
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: " mx-4 my-4",
         children: [
@@ -40021,31 +40021,44 @@ const Car = ()=>{
                         children: "Available Cars"
                     }, void 0, false, {
                         fileName: "src/components/Car/Car.js",
-                        lineNumber: 56,
+                        lineNumber: 57,
                         columnNumber: 7
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                         className: "mb-6",
-                        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                            type: "text",
-                            placeholder: "Search by make or model",
-                            value: searchQuery,
-                            onChange: handleSearchChange,
-                            className: "w-full my-2 p-2  border border-gray-300 rounded-2xl"
-                        }, void 0, false, {
-                            fileName: "src/components/Car/Car.js",
-                            lineNumber: 59,
-                            columnNumber: 7
-                        }, undefined)
-                    }, void 0, false, {
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                type: "text",
+                                placeholder: "Search by make or model",
+                                value: searchQuery,
+                                onChange: handleSearchChange,
+                                className: "w-full my-2 p-2  border border-gray-300 rounded-2xl"
+                            }, void 0, false, {
+                                fileName: "src/components/Car/Car.js",
+                                lineNumber: 60,
+                                columnNumber: 7
+                            }, undefined),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                children: [
+                                    "Found ",
+                                    filteredCars.length,
+                                    " cars"
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/components/Car/Car.js",
+                                lineNumber: 67,
+                                columnNumber: 7
+                            }, undefined)
+                        ]
+                    }, void 0, true, {
                         fileName: "src/components/Car/Car.js",
-                        lineNumber: 58,
+                        lineNumber: 59,
                         columnNumber: 7
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/components/Car/Car.js",
-                lineNumber: 54,
+                lineNumber: 55,
                 columnNumber: 5
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -40056,29 +40069,29 @@ const Car = ()=>{
                             car: car
                         }, car._id, false, {
                             fileName: "src/components/Car/Car.js",
-                            lineNumber: 74,
+                            lineNumber: 77,
                             columnNumber: 13
                         }, undefined))
                 }, void 0, false, {
                     fileName: "src/components/Car/Car.js",
-                    lineNumber: 71,
+                    lineNumber: 74,
                     columnNumber: 9
                 }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                     children: "No cars match your search."
                 }, void 0, false, {
                     fileName: "src/components/Car/Car.js",
-                    lineNumber: 78,
+                    lineNumber: 81,
                     columnNumber: 9
                 }, undefined)
             }, void 0, false, {
                 fileName: "src/components/Car/Car.js",
-                lineNumber: 69,
+                lineNumber: 71,
                 columnNumber: 7
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/components/Car/Car.js",
-        lineNumber: 53,
+        lineNumber: 54,
         columnNumber: 5
     }, undefined);
 };
